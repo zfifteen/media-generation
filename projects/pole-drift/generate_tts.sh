@@ -1,0 +1,36 @@
+#!/bin/bash
+
+TEXT=$(cat <<'END_TEXT' | tr '\n' ' '
+Imagine the Earth as a spinning top, not perfectly steady, but with a slight wobble in its rotation. This is known as polar motion, and one key part is the Chandler wobble—a gentle oscillation of Earth's spin axis that happens every about 433 days. Historically, it has an amplitude of around 100 to 200 milliarcseconds, or mas. But recent data from 2026 shows interesting patterns in this motion. Today, we'll explore what the data really tells us, based on verified sources like the International Earth Rotation and Reference Systems Service (IERS) and NASA.
+
+The Chandler wobble is like a free nutation, caused by Earth's non-rigid structure—oceans, atmosphere, and internal mass shifts all play a role. It combines with annual variations from seasonal changes, creating a spiraling path for the pole. Over decades, the mean pole also drifts slowly, about 3-4 mas per year, often towards North America due to climate factors like ice melt.
+
+But has it \\'collapsed\\'? Recent studies note a suppression in amplitude since around 2016, but no abrupt stop in 2026. Instead, data shows continued motion with a typical amplitude of about 360 mas.
+
+Let\\'s look at a specific 13-day period from January 23 to February 5, 2026, using IERS data. The pole\\'s position shifted from x ≈ 91 mas, y ≈ 349 mas to x ≈ 92 mas, y ≈ 366 mas. That\\'s a total change of about 17 mas, or an average drift rate of roughly 1.27 mas per day, mainly northward.
+
+Compared to the historical amplitude of 200 mas, this traversal is about 8.5% of the oscillatory range. It\\'s a small, steady drift within normal variations—not a dramatic shift or collapse.
+
+While there\\'s no evidence of the wobble stopping entirely, ongoing changes in polar motion could signal deeper processes—like shifts in Earth\\'s core or climate-driven mass redistribution. This might affect GPS systems, which rely on precise reference frames, navigation tools, and even climate models that track sea levels and ice melt.
+
+Without a full \\'collapse,\\' the pole isn\\'t unbound, but monitoring is crucial. The endpoint of long-term drifts remains uncertain, as historical precedents are limited.
+
+In summary, Earth\\'s polar motion continues with its characteristic wobble, but recent data highlights subtle drifts that warrant attention. By staying informed through sources like IERS and NASA, we can better understand our planet\\'s dynamic behavior. Thanks for watching—keep exploring the wonders of Earth science!
+END_TEXT
+)
+
+TEXT=$(echo "$TEXT" | sed 's/\"/\\\"/g') # Escape double quotes if any
+
+curl --request POST \
+  --url https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM \
+  --header "Authorization: Bearer sk_5550d19f3c9f1813fd19bef5950942e049c7c1eec05e56e8" \
+  --header "Content-Type: application/json" \
+  --data "{
+    \"text\": \"$TEXT\",
+    \"model_id\": \"eleven_monolingual_v1\",
+    \"voice_settings\": {
+      \"stability\": 0.5,
+      \"similarity_boost\": 0.5
+    }
+  }" \
+  --output scripts/pole-drift/tts_audio.mp3
