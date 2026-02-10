@@ -240,7 +240,9 @@ class CompetenceMismatchVoice(VoiceoverScene):
         # ---------------------------------------------------------------
         # ACT 4: Gauges
         # ---------------------------------------------------------------
-        gauge_y = -3.8
+        # CHANGED: moved gauges up from -3.8 to -3.0 so the question
+        # text fits below them without overlapping
+        gauge_y = -3.0
         gauge_w = 5.0
 
         # --- Left gauge (Physical Tradecraft) ---
@@ -255,8 +257,6 @@ class CompetenceMismatchVoice(VoiceoverScene):
             fill_color=ACCENT_GREEN, fill_opacity=0.85,
             stroke_width=0,
         )
-        # FIX: move to gauge center first so y-position is correct,
-        # THEN align the left edge horizontally
         phys_gauge_fill.move_to(phys_gauge_bg)
         phys_gauge_fill.align_to(phys_gauge_bg, LEFT).shift(RIGHT * 0.05)
 
@@ -276,7 +276,6 @@ class CompetenceMismatchVoice(VoiceoverScene):
             fill_color=ACCENT_RED, fill_opacity=0.85,
             stroke_width=0,
         )
-        # FIX: same pattern -- center on bg, then align left edge
         ransom_gauge_fill.move_to(ransom_gauge_bg)
         ransom_gauge_fill.align_to(ransom_gauge_bg, LEFT).shift(RIGHT * 0.05)
 
@@ -303,8 +302,6 @@ class CompetenceMismatchVoice(VoiceoverScene):
                 run_time=0.5,
             )
 
-            # FIX: build targets from scratch at the correct y-position
-            # rather than copying a potentially mis-located fill
             phys_target = phys_gauge_fill.copy()
             phys_target.stretch_to_fit_width(gauge_w * 0.85)
             phys_target.move_to(phys_gauge_bg)
@@ -332,13 +329,19 @@ class CompetenceMismatchVoice(VoiceoverScene):
         # ---------------------------------------------------------------
         # ACT 5: Core question
         # ---------------------------------------------------------------
+        # CHANGED: position relative to the gauge bottoms instead of a
+        # hardcoded y-value, with enough buff to sit cleanly below
+        gauge_group_bottom = VGroup(phys_gauge_bg, ransom_gauge_bg)
+
         question = Text(
             "Same actor, or two different people?",
             font_size=24,
             weight=BOLD,
             color=ACCENT_AMBER,
-        ).move_to(DOWN * 4.3)
-        safe_position(question)
+        )
+        question.next_to(gauge_group_bottom, DOWN, buff=0.6)
+        # Use a more generous lower bound so it does not clamp back up
+        safe_position(question, min_y=-4.6)
 
         with self.voiceover(text=SCRIPT["question"]):
             self.play(FadeIn(question, shift=UP * 0.3), run_time=0.8)
